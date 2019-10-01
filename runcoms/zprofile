@@ -1,0 +1,202 @@
+#
+# Executes commands at login pre-zshrc.
+#
+# Authors:
+#   Ratheesh <ratheeshreddy@gmail.com>
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+
+#
+# Browser
+#
+
+if [[ "$OSTYPE" == darwin* ]]; then
+    export BROWSER='open'
+fi
+
+#
+# Editors
+#
+
+if (( $+commands[nvim] )); then
+    export VISUAL='nvim'
+    export EDITOR='nvim'
+    export GIT_EDITOR='nvim'
+else
+    export VISUAL='vim'
+    export EDITOR='vim'
+    export GIT_EDITOR='vim'
+fi
+
+export ALTERNATE_EDITOR=""
+# export LESS_TERMCAP_md="$ORANGE"
+export MINICOM="-m -c on -w -z"	# start minicom in color
+export PAGER="less"
+
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR=$EDITOR
+    export GIT_EDITOR=$GIT_EDITOR
+else
+    export EDITOR=$EDITOR
+    export GIT_EDITOR=$GIT_EDITOR
+fi
+
+# misc
+export GCC_COLOR="auto"
+export TERM="xterm-256color"
+
+# disable soft flow control
+stty ixany
+stty ixoff -ixon
+#
+# Language
+#
+
+# if [[ -z "$LANG" ]]; then
+export GDM_LANG='en_US.UTF-8'
+export LANG='en_US.UTF-8'
+export LANGUAGE='en_US.UTF-8'
+# fi
+
+#
+# Paths
+#
+
+# Ensure path arrays do not contain duplicates.
+typeset -gU cdpath fpath mailpath path
+
+# Set the the list of directories that cd searches.
+# cdpath=(
+#   $cdpath
+# )
+
+# Set the list of directories that Zsh searches for programs.
+path=(
+$HOME/bin
+$HOME/.local/bin
+$HOME/.autojump/bin
+/usr/local/{bin,sbin}
+/{bin,sbin}
+/usr/{bin,sbin}
+/usr/local/{bin,sbin}
+/usr/{bin,sbin}
+$path[@]
+)
+
+#
+# Less
+#
+
+# Set the default Less options.
+# Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+# Remove -X and -F (exit if the content fits on one screen) to enable it.
+export LESS='-F -g -i -M -R -S -w -X -z-4'
+
+# Set the Less input preprocessor.
+# Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
+if (( $#commands[(i)lesspipe(|.sh)] )); then
+    export LESSOPEN="| /usr/bin/env $commands[(i)lesspipe(|.sh)] %s 2>&-"
+fi
+
+#
+# Temporary Files
+#
+
+if [[ ! -d "$TMPDIR" ]]; then
+    export TMPDIR="/tmp/$LOGNAME"
+    mkdir -p -m 700 "$TMPDIR"
+fi
+
+TMPPREFIX="${TMPDIR%/}/zsh"
+
+# common environment variable exports
+
+# generic env setting
+export TERMINFO=/lib/terminfo	# required for gdb-tui
+export TZ='Asia/Kolkata'; export TZ
+export LC_ALL='en_US.UTF-8'
+
+if [[ $(echotc Co) -ge 256 ]]; then
+    # 256 color terminals
+    export GREP_COLORS="mt=03;04;38;5;2;48;5;234:sl=:cx=:fn=38;5;65:ln=38;5;30:bn=37:se=38;5;198"
+else
+    export GREP_COLORS='ms=03;04;91:mc=01;33;100:sl=:cx=:fn=94:ln=32:bn=33:se=35'
+fi
+
+# autojump configuration
+export AUTOJUMP_IGNORE_CASE=1 # ignore case in autojump completion
+export AUTOJUMP_AUTOCOMPLETE_CMDS='cp vim make'
+
+# configure fzf plugin
+if (( $+commands[fd] ));then
+    export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --color=never --exclude .git'
+elif (( $+commands[ag] )); then
+    echo 'WARN: fd command not installed!'
+    export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
+    # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+fi
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
+--color=dark
+--color=fg:#a0a0a0,bg:-1,hl:#FF0000,fg+:#c0c0c0,bg+:#304054,hl+:#00D700
+--color=info:#e79498,prompt:#fc0697,pointer:#be5046,marker:#e5c07b,spinner:#61afef,header:#61afef
+'
+
+# Remove the prefix prompt when logged as ratheesh
+export DEFAULT_USER=`whoami`
+
+# enable ccache for faster rebuilds
+export USE_CCACHE=1
+
+# fasd initialization
+if (( $+commands[fasd] )); then
+    eval "$(fasd --init auto)"
+fi
+
+# thefuck module initialization
+if (( $+commands[thefuck] )); then
+    eval $(thefuck --alias)
+fi
+
+# set neovim listening address
+if (( $+commands[nvr] && $+commands[nvim] ));then
+    export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
+    alias nvr='nvr -s --remote'
+fi
+
+# autojump initialization
+[[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && source $HOME/.autojump/etc/profile.d/autojump.sh
+
+# fzf initialization
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Load virtualenvwrapper into the shell session.
+if (( $+commands[virtualenvwrapper_lazy.sh] )); then
+    export VIRTUALENV_USE_DISTRIBUTE=1
+    export VIRTUALENV_DISTRIBUTE=1
+    # Disable default virtualenv prompt.
+    VIRTUAL_ENV_DISABLE_PROMPT=1
+
+    # Python virtualenvwrapper settings
+    # Set the directory where virtual environments are stored.
+    export WORKON_HOME="$HOME/.virtualenvs"
+    export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
+
+    # Tell pip to respect virtualenv
+    export PIP_RESPECT_VIRTUALENV=true
+    export PIP_VIRTUALENV_BASE=$WORKON_HOME
+
+    if [ "$VIRTUALENVWRAPPER_PYTHON" = "" ]
+    then
+        VIRTUALENVWRAPPER_PYTHON="$(command \which python)"
+    fi
+
+    # Don't create *.pyc files by default
+    export PYTHONDONTWRITEBYTECODE=1
+
+    source "$commands[virtualenvwrapper_lazy.sh]"
+fi
+
+# End of File
+# vim: set ft=sh ff=unix ts=4 sw=4 tw=0 expandtab:
