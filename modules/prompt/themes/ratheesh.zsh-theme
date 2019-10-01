@@ -288,6 +288,16 @@ ${SSH_TTY:+"%F{8}⌠%b%f%{$italic%}%F{102}%n%b%{$reset%}%F{60}@%F{131}%m%F{8}⌡
 # Clear to the end of the line before execution
 function preexec () { print -rn -- $terminfo[el]; }
 
-prompt_ratheesh_setup "$@"
+prompt_ratheesh_preview () {
+  if (( ${#} )); then
+    prompt_preview_theme ratheesh "${@}"
+  else
+    prompt_preview_theme ratheesh
+    print
+    prompt_preview_theme eriner black blue green yellow
+  fi
+}
+
+prompt_ratheesh_setup "${@}"
 
 # End of File
