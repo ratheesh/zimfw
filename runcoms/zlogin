@@ -3,5 +3,89 @@
 #
 
 # Initialize zim
-[[ -s ${ZIM_HOME}/login_init.zsh ]] && source ${ZIM_HOME}/login_init.zsh
+# [[ -s ${ZIM_HOME}/login_init.zsh ]] && source ${ZIM_HOME}/login_init.zsh
 
+# ===== Customization =====
+(
+  local dir file
+  setopt LOCAL_OPTIONS EXTENDED_GLOB
+  autoload -U zrecompile
+
+  zim_mods=${ZDOTDIR:-${HOME}}/.zim/modules
+  setopt EXTENDED_GLOB
+
+  # zcompile the completion cache; siginificant speedup.
+  for file in ${ZDOTDIR:-${HOME}}/.zcomp^(*.zwc)(.); do
+    zrecompile ${file}
+  done
+
+  # from prezto
+  # Compile the completion dump to increase startup speed.
+  zcompdump="${ZDOTDIR:-$HOME}/.zcompdump"
+  if [[ -s "$zcompdump" && (! -s "${zcompdump}.zwc" || "$zcompdump" -nt "${zcompdump}.zwc") ]]; then
+      zrecompile "$zcompdump"
+  fi
+
+  # zcompile .zshrc
+  zrecompile ${ZDOTDIR:-${HOME}}/.zshrc
+
+  # zcompile enabled module init scripts
+  for file in ${ZIM_HOME}/modules/${^zmodules}/init.zsh(-.N); do
+    zrecompile -pq ${file}
+  done
+
+  # zcompile all prompt setup scripts
+  for file in ${ZIM_HOME}/modules/prompt/functions/prompt_*_setup; do
+    zrecompile -pq ${file}
+  done
+
+  # zcompile all .zsh files in the custom module
+  for file in ${zim_mods}/custom/**/^(README.md|*.zwc)(.); do
+    zrecompile ${file}
+  done
+
+  # zcompile all autoloaded functions
+  for file in ${zim_mods}/**/functions/^(*.zwc)(.); do
+    zrecompile ${file}
+  done
+
+  # syntax-highlighting
+  for file in ${zim_mods}/syntax-highlighting/external/highlighters/**/*.zsh; do
+    zrecompile ${file}
+  done
+  zrecompile ${zim_mods}/syntax-highlighting/external/zsh-syntax-highlighting.zsh
+
+  # zsh-histery-substring-search
+  zrecompile ${zim_mods}/history-substring-search/external/zsh-history-substring-search.zsh
+
+  # Extra additions
+
+  # other rc files as well
+  zrecompile ${ZDOTDIR:-${HOME}}/.zimrc
+  zrecompile ${ZDOTDIR:-${HOME}}/.zshenv
+  zrecompile ${ZDOTDIR:-${HOME}}/.zprofile
+  zrecompile ${ZDOTDIR:-${HOME}}/.zlogin
+
+  # Remove this check once autosuggestions is a part of zim
+  [ -f ${zim_mods}/autosuggestions/init.zsh ] && \
+      zrecompile ${zim_mods}/autosuggestions/external/zsh-autosuggestions.zsh \
+               &> /dev/null
+
+  # get fzf init script compiled
+  [ -f ~/.fzf.zsh ] && zrecompile ~/.fzf.zsh
+
+) &!
+
+# Print a random, hopefully interesting, adage.
+if (( $+commands[fortune] )); then
+ if [[ -t 0 || -t 1 ]]; then
+	if (( $+commands[lolcat] ));then
+		fortune -a de | cowsay -f tux | lolcat
+	else
+		fortune -a de | cowsay -f tux
+	fi
+   print
+ fi
+fi
+
+# End of File

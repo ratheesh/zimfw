@@ -8,3 +8,295 @@ export ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 # Start zim
 [[ -s ${ZIM_HOME}/init.zsh ]] && source ${ZIM_HOME}/init.zsh
 
+# ========= Customization =========
+#
+# support for bash completion
+autoload bashcompinit
+bashcompinit
+
+# Some basic settings
+HISTSIZE=10000 # session history size
+SAVEHIST=10000 # saved history
+HISTFILE=$HOME/.zshistory # history file
+ZLE_RPROMPT_INDENT=0
+
+setopt shwordsplit           # make sure that $arm works fine
+setopt multibyte             # Support multibyte support
+setopt nobgnice              # run bg jobs at full speed
+setopt complete_in_word      # allow tab completion in the middle of a word
+setopt always_to_end         # Place cursor at end after completion
+setopt no_auto_remove_slash  # do not remove slash on directory completion
+setopt append_history        # append
+setopt hist_ignore_all_dups  # no duplicate
+setopt hist_reduce_blanks    # trim blanks
+setopt hist_verify           # show before executing history commands
+setopt inc_append_history    # add commands as they are typed, dont wait until shell exit
+setopt share_history         # share hist between sessions
+setopt bang_hist             # !keyword
+setopt MULTIOS               # write to multiple files
+setopt auto_remove_slash     # self explicit
+setopt clobber               # clobber on redirect
+setopt interactive_comments  # enable interactive comments
+setopt aliases               # enable aliases
+setopt auto_cd               # if command is a path, cd into it
+setopt auto_remove_slash     # self explicit
+setopt chase_links           # resolve symlinks
+setopt correct               # try to correct spelling of commands
+setopt extended_glob         # activate complex pattern globbing
+setopt glob_dots             # include dotfiles in globbing
+setopt nohashdirs            # avoid having to run `rehash` on each new executable in $PATH
+setopt autopushd
+setopt completealiases
+setopt pushdignoredups
+setopt pushdminus
+setopt alias_func_def       # allow alias with function names
+setopt interactivecomments  # allows you to type Bash style comments on your command line
+
+unsetopt print_exit_value    # print return value if non-zero
+unsetopt correct_all	     # do not correct all automatically
+unsetopt beep                # disable audible bell
+unsetopt hist_ignore_space   # ignore space prefixed commands
+unsetopt rm_star_silent      # ask for confirmation for `rm *' or `rm path/*'
+unsetopt hup                 # no hup signal at shell exit
+unsetopt flowcontrol	     # ctr-s/q has not effect now (Thanx!!!)
+unsetopt AUTO_NAME_DIRS
+
+# watch=all                  # watch all logins - enabling this will print annoying msgs on terminal
+logcheck=30                  # every 30 seconds
+WATCHFMT="%n from %M has %a tty%l at %T %W"
+
+autoload -U run-help
+autoload run-help-git
+# unalias run-help
+alias help=run-help
+
+# umask for new folders and files
+umask 022
+
+# reset terminal settings if previous terminal instance terminated abnormally
+ttyctl -f
+
+# Directories
+# zstyle ':completion:*:default' list-colors ''
+
+# List hidden files and folder during completion by default
+_comp_options+=(globdots)
+
+# Adjust key timeout (useful for Vi mode on Zsh)
+export KEYMAPTIMEOUT=1
+export KEYTIMEOUT=1
+
+# If this is removed, cursor after prompt behave weirdly
+[[ $TMUX = "" ]] && export TERM="xterm-256color"
+
+# history substring search module
+HISTORY_SUBSTRING_SEARCH_FUZZY=true
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=233,fg=40,underline'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=234,fg=196,underline'
+for keymap in 'emacs' 'viins' 'vicmd'; do
+    bindkey -M ${keymap} "^p" history-substring-search-up
+    bindkey -M ${keymap} "^n" history-substring-search-down
+    # bindkey -M ${keymap} "^r" history-incremental-search-backward
+done
+
+# Bind j/k in normal mode
+if [[ ${keymap} = 'vicmd' ]];then
+    bindkey -M ${keymap} "j" history-substring-search-down
+    bindkey -M ${keymap} "k" history-substring-search-up
+fi # if
+
+# zsh syntax-highlighting module
+
+# pattern customization - highlight dangerous ones - need to look out when used!
+typeset -A ZSH_HIGHLIGHT_PATTERNS
+# ZSH_HIGHLIGHT_PATTERNS+=('sudo'        'fg=9,bold')
+# ZSH_HIGHLIGHT_PATTERNS+=('mv'          'fg=9,bold')
+# ZSH_HIGHLIGHT_PATTERNS+=('usermod'     'fg=9,bold')
+# ZSH_HIGHLIGHT_PATTERNS+=('fdisk'       'fg=9,bold')
+# ZSH_HIGHLIGHT_PATTERNS+=('dd ' 'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('mkfs.vfat'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('mkfs.ext2'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('mkfs.ext3'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('mkfs.ext4'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('/dev/sda'    'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('/dev/sda1'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('/dev/null'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('/dev/zero'   'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('/dev/random' 'fg=9,bold')
+ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *'    'fg=9,bold')
+
+# regex highlighter
+typeset -A ZSH_HIGHLIGHT_REGEXP
+ZSH_HIGHLIGHT_REGEXP+=('\bsudo\b'   fg=9,bold)
+ZSH_HIGHLIGHT_REGEXP+=('\bmv\b'     fg=9,bold)
+ZSH_HIGHLIGHT_REGEXP+=('\busermod\b' fg=9,bold)
+ZSH_HIGHLIGHT_REGEXP+=('\bfdisk\b'  fg=9,bold)
+ZSH_HIGHLIGHT_REGEXP+=('\bdd\b'     fg=9,bold)
+ZSH_HIGHLIGHT_REGEXP+=('\brm\b'     fg=9,bold)
+
+# main customization
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=160'
+ZSH_HIGHLIGHT_STYLES[reserved-word]='fg=2'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=27'
+ZSH_HIGHLIGHT_STYLES[suffix-alias]='fg=65'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=13'
+ZSH_HIGHLIGHT_STYLES[function]='fg=6'
+ZSH_HIGHLIGHT_STYLES[command]='fg=27'
+ZSH_HIGHLIGHT_STYLES[precommand]='fg=5'
+ZSH_HIGHLIGHT_STYLES[commandseparator]='fg=94,bold'
+ZSH_HIGHLIGHT_STYLES[hashed-command]='fg=202,bold'
+ZSH_HIGHLIGHT_STYLES[path]='fg=96' # 150
+ZSH_HIGHLIGHT_STYLES[path_pathseparator]='fg=33,bold' #33
+ZSH_HIGHLIGHT_STYLES[path_prefix]='fg=101,underline'
+ZSH_HIGHLIGHT_STYLES[path_prefix_pathseparator]='fg=160,bold'
+ZSH_HIGHLIGHT_STYLES[globbing]='fg=178'
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=174,underline'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=162'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=142'
+ZSH_HIGHLIGHT_STYLES[back-hyphen-option]='fg=10'
+ZSH_HIGHLIGHT_STYLES[back-quoted-option]='fg=29'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=2'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=132'
+ZSH_HIGHLIGHT_STYLES[dollar-quoted-argument]='fg=11'
+ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]='fg=11'
+ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]='fg=2'
+ZSH_HIGHLIGHT_STYLES[back-dollar-quoted-argument]='fg=101'
+ZSH_HIGHLIGHT_STYLES[assign]='fg=131'
+ZSH_HIGHLIGHT_STYLES[redirection]='fg=5'
+ZSH_HIGHLIGHT_STYLES[comment]='fg=240'
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=27'
+ZSH_HIGHLIGHT_STYLES[root]='standout'
+ZSH_HIGHLIGHT_STYLES[default]='fg=246'
+
+# brackets
+ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=27,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-2]='fg=9,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-3]='fg=12,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-4]='fg=6,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-5]='fg=27,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-6]='fg=9,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-7]='fg=172,bold'
+ZSH_HIGHLIGHT_STYLES[bracket-level-8]='fg=93,bold'
+
+# highlighting for line editor
+zle_highlight=(region:bg=132,fg=0 \
+    isearch:underline,fg=214,bg=234 \
+    paste:standout)
+
+# zsh auto-suggestions module
+my-autosuggest-accept() {
+    zle autosuggest-accept
+    zle redisplay
+    zle redisplay
+}
+zle -N my-autosuggest-accept
+ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=my-autosuggest-accept
+for keymap in 'emacs' 'viins' 'vicmd'; do
+    bindkey -M ${keymap} '^ ' my-autosuggest-accept
+done
+
+# bindkey "^M" accept-line
+# ZSH_AUTOSUGGEST_STRATEGY='match_prev_cmd'
+# ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(emacs-forward-word)
+ZSH_AUTOSUGGEST_USE_ASYNC=true
+ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd)
+for keymap in 'emacs' 'viins' 'vicmd'; do
+    bindkey -M ${keymap} '^\n' autosuggest-execute
+done
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS=("${(@)ZSH_AUTOSUGGEST_CLEAR_WIDGETS:#(up|down)-line-or-history}")
+ZSH_AUTOSUGGEST_CLEAR_WIDGETS+=(history-substring-search-up history-substring-search-down)
+
+# Enable multiselection of items
+zmodload zsh/complist
+bindkey -M menuselect 'a' accept-and-menu-complete
+
+# use the vi navigation keys in menu completion
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+
+# Esc to exit menuselect
+bindkey -M menuselect '' send-break
+
+# Meta-u to chdir to the parent directory
+bindkey -s '\eu' '^Ucd ..; ls^M'
+
+# Don't use fzf completions
+if (( $+commands[fzf] )); then
+    fzf_default_completion='expand-or-complete-with-indicator'
+fi
+
+# disable highlighting on paste
+zle_highlight+=(paste:none)
+
+# global alias expansion keys
+# bindkey '^ ' magic-space          # control-space to bypass completion
+bindkey -M isearch " " magic-space # normal space during searches
+
+# initialize fzf here.
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Customize to your needs...
+# add custom users for auto completion
+users=($USER rreddy "$users")
+zstyle ':completion:*' users $users
+
+# xilinx devel setup
+alias cgdb-xilinx='cgdb -d arm-xilinx-linux-gnueabi-gdb -- -quiet'
+export arm='ARCH=arm CROSS_COMPILE=arm-linux-gnueabi-'
+export xilinx='ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi-'
+
+# freescale devel settings
+alias cgdb_fscl='cgdb -d arm-linux-gnueabihf-gdb -- -quiet'
+export fscl='ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-'
+
+# freescale devel settings
+alias cgdb_logicpd='cgdb -d arm-none-linux-gnueabi-gdb -- -quiet'
+export logicpd='ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi-'
+
+# STM devel settings
+alias cgdb_stm='cgdb -d arm-none-eabi-gdb -- -quiet'
+export stm='ARCH=arm CROSS_COMPILE=arm-none-eabi-'
+
+alias goarm='env CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 go'
+
+path=(
+    /usr/lib/llvm-3.6/bin	# for clang
+    /opt/SEGGER/JLink
+    $path[@]
+)
+
+PATH="/home/ratheesh/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/home/ratheesh/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/home/ratheesh/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/home/ratheesh/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/home/ratheesh/perl5"; export PERL_MM_OPT;
+
+# colorize output of few utilities
+if (( $+commands[grc] )); then
+    alias ping='/usr/bin/grc -s --colour=auto ping'
+    alias df='/usr/bin/grc -s --colour=auto df -kh'
+    alias ifconfig='/usr/bin/grc -s --colour=auto ifconfig'
+    alias route='/usr/bin/grc -s --colour=auto route'
+    alias irclog='/usr/bin/grc -s --colour=auto irclog'
+    # alias ls='/usr/bin/grc -s --colour=auto ls'
+    alias mount='/usr/bin/grc -s --colour=auto mount'
+    alias gcc='/usr/bin/grc -s --colour=auto gcc'
+    alias cal='/usr/bin/grc -s --colour=auto cal'
+    alias ncal='/usr/bin/grc -s --colour=auto ncal -w'
+fi
+
+alias vi=vim
+alias vim=nvim
+
+# Source local settings file
+LOCAL_ZSHRC=~/.local.zshrc
+if [ -f $LOCAL_ZSHRC ];then
+    source $LOCAL_ZSHRC
+fi
+
+# End of File
+
