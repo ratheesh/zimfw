@@ -157,6 +157,9 @@ function git_repo_status() {
     # if [[ -n $branch ]] && git_status+=(${branch})
     git_status+=($(coalesce $branch $position $commit))
 
+    local -i stashed=$(command git stash list 2>/dev/null | wc -l)
+    (( stashed )) && git_status+=("%F{7}${stashed}%B%F{63}S%f%b")
+
     (( ahead > 0 )) && git_status+=("%F{7}${ahead}%B%F{34}↑%f%b")
     (( behind > 0 )) && git_status+=("%F{7}${behind}%B%F{198}↓%f%b")
     (( untracked > 0 )) && git_status+=("%F{7}${untracked}%B%F{162}??%f")
