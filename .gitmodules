@@ -26,3 +26,6 @@
 	path = modules/autosuggestions/external
 	url = https://github.com/zsh-users/zsh-autosuggestions.git
 	ignore = untracked
+[submodule "modules/vimode/external"]
+	path = modules/vimode/external
+	url = https://github.com/b4b4r07/zsh-vimode-visual
