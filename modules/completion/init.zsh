@@ -94,3 +94,133 @@ zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 # completion, otherwise _ssh_hosts will fall through and read the ~/.ssh/config
 zstyle -e ':completion:*:*:ssh:*:my-accounts' users-hosts \
   '[[ -f ${HOME}/.ssh/config && ${key} == hosts ]] && key=my_hosts reply=()'
+
+#--------------------------------------------------------------------------------
+# --------------------------- PORTED/CUSTOMIZED CHANGES -------------------------
+#--------------------------------------------------------------------------------
+
+# Automatically use menu completion after the second consecutive request for completion
+setopt AUTO_MENU
+
+# Automatically list choices on an ambiguous completion.
+setopt AUTO_LIST
+
+# On an ambiguous completion, instead of listing possibilities or beeping, insert the first match immediately.
+# Then when completion is requested again, remove the first match and insert the second match, etc.
+unsetopt MENU_COMPLETE
+
+# Complete from both ends of a word.
+setopt COMPLETE_IN_WORD
+
+# Disable start/stop characters in shell editor.
+unsetopt FLOW_CONTROL
+
+# If completed parameter is a directory, add a trailing slash.
+setopt AUTO_PARAM_SLASH
+
+# Show message while waiting for completion
+zstyle ':completion:*' show-completer true
+
+zstyle ':completion:*:corrections'  format '%B%F{60}---%f%b %F{3}%d %F{9}(errors: %e)%f %B%F{60}---%f%b'
+zstyle ':completion:*:descriptions' format '%B%F{60}---%f%b %F{65}%d%f %B%F{60}---%f%b'
+zstyle ':completion:*:messages'     format '%B%F{60}---%f%b %F{65}%d%f %B%F{60}---%f%b'
+zstyle ':completion:*:warnings'     format '%B%F{60}---%f%b %F{9}no matches found%f %B%F{60}---%f%b'
+zstyle ':completion:*'              format '%B%F{60}---%f%b %F{65}%d%f %B%F{60}---%f%b'
+
+# zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*' list-prompt %SAt %p: Hit \<TAB\> for more, or a character to insert%s
+
+zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+
+zstyle ':completion:*' list-dirs-first true
+
+zstyle ':completion:*:-tilde-:*' group-order 'named-directories' 'path-directories' 'users' 'expand'
+
+# Environmental Variables
+zstyle ':completion::*:(-command-|export):*' fake-parameters ${${${_comps[(I)-value-*]#*,}%%,*}:#-*-}
+
+zstyle ':completion:*:expand:*' group-order all-expansions expansions
+
+# cd|mv|cp command never selects the parent directory (e.g.: cd ../<TAB>
+zstyle ':completion:*:(cd|mv|cp):*' ignore-parents parent pwd
+
+zstyle ':completion:*:cd:*' ignored-patterns '(*/)#lost+found'
+zstyle ':completion:*:cd:*' ignored-patterns '(*/)#CVS'
+zstyle ':completion:*:(all-|)files' ignored-patterns '(|*/)CVS'
+
+# Avoid completion of unwanted(mostly default) users
+zstyle ':completion:*:*:*:users' ignored-patterns \
+    $(awk -F: '$3<1000 || $3>60000 {print $1}' /etc/passwd)
+
+zstyle ':completion:*:bd:*' list-colors '=^(-- *)=34'
+
+# Prettier completion for processes
+zstyle ':completion:*:*:*:*:processes' force-list always
+
+zstyle ':completion:*:options' list-colors '=^(-- *)=34'
+
+# partial match coloring
+zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=2=91=2}:${(s.:.)LS_COLORS}")'
+
+# prevent a tab from being inserted when there are no characters to the left of the cursor.
+zstyle ':completion:*' insert-tab false
+
+# 0 -- vanilla completion (abc => abc)
+# 1 -- smart case completion (abc => Abc)
+# 2 -- word flex completion (abc => A-big-Car)
+# 3 -- full flex completion (abc => ABraCadabra)
+# zstyle ':completion:*' matcher-list '' \
+#        'm:{a-z\-}={A-Z\_}' \
+#        'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \
+#        'r:|?=** m:{a-z\-}={A-Z\_}'
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' use-ip true
+
+# Populate hostname completion.
+zstyle -e ':completion:*:hosts' hosts 'reply=(
+  ${=${=${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#| ]*}//\]:[0-9]*/ }//,/ }//\[/ }
+  ${=${(f)"$(cat /etc/hosts(|)(N) <<(ypcat hosts 2>/dev/null))"}%%\#*}
+  ${=${${${${(@M)${(f)"$(cat ~/.ssh/config 2>/dev/null)"}:#Host *}#Host }:#*\**}:#*\?*}}
+)'
+
+# processes
+zstyle ':completion:*:*:*:*:processes' command 'ps -u $USER -o pid,user,comm -w'
+
+# Kill
+zstyle ':completion::*:kill:*:*' command 'ps xf -U $USER -o pid,%cpu,cmd'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;36=0=01'
+zstyle ':completion:*:*:kill:*' menu yes select
+zstyle ':completion:*:*:kill:*' force-list always
+zstyle ':completion:*:*:kill:*' insert-ids single
+zstyle ':completion:*:*:kill:*' list-colors '=(#b) #([0-9]#)*( *[a-z])*=34=31=33'
+
+zstyle ':completion:*:directories'  list-colors '=*=32'
+
+# user completion array. users completion will use only these items
+typeset -gU users
+users=(root)
+# zstyle ':completion:*' users $users
+zstyle -e ':completion:*:users' users 'local user; getent passwd | while IFS=: read -rA user; do (( user[3] >= 1000 || user[3] == 0 )) && reply+=($user[1]); done'
+
+# completion of .. directories
+# zstyle ':completion:*' special-dirs true
+
+# fault tolerance
+# zstyle ':completion:*' completer _complete _correct _approximate
+# (1 error on 3 characters)
+# zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX+$#SUFFIX)/3 )) numeric )'
+
+# smart editor completion
+zstyle ':completion:*:(nano|vim|nvim|vi|emacs|e):*' ignored-patterns '*.(wav|mp3|flac|ogg|mp4|avi|mkv|webm|iso|dmg|so|o|a|bin|exe|dll|pcap|7z|zip|tar|gz|bz2|rar|deb|pkg|gzip|pdf|mobi|epub|png|jpeg|jpg|gif)'
+
+# SSH/SCP/RSYNC
+zstyle ':completion:*:(scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:(scp|rsync):*' group-order users files all-files hosts-domain hosts-host hosts-ipaddr
+zstyle ':completion:*:ssh:*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
+zstyle ':completion:*:ssh:*' group-order users hosts-domain hosts-host users hosts-ipaddr
+zstyle ':completion:*:(ssh|ssh-copy-id|scp|rsync):*:hosts-host' ignored-patterns '*(.|:)*' loopback ip6-loopback localhost ip6-localhost broadcasthost
+zstyle ':completion:*:(ssh|ssh-copy-id|scp|rsync):*:hosts-domain' ignored-patterns '<->.<->.<->.<->' '^[-[:alnum:]]##(.[-[:alnum:]]##)##' '*@*'
+zstyle ':completion:*:(ssh|ssh-copy-id|scp|rsync):*:hosts-ipaddr' ignored-patterns '^(<->.<->.<->.<->|(|::)([[:xdigit:].]##:(#c,2))##(|%*))' '127.0.0.<->' '255.255.255.255' '::1' 'fe80::*'
+
+# End of File
