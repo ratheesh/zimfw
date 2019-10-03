@@ -77,21 +77,25 @@ function editor-info {
   typeset -gA editor_info
 
   if [[ "$KEYMAP" = 'vicmd' ]]; then
-    zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
-    editor_info[keymap]="$REPLY"
-    editor_info[mode]="%F{60}                  >>> %F{130}Normal %F{60}<<<%f"
-  else
-    zstyle -s ':zim:input:info:keymap:primary' format 'REPLY'
-    editor_info[mode]="%F{60}                  >>> %F{65}Insert %F{60}<<<%f"
-    editor_info[keymap]="$REPLY"
+      zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
+      editor_info[keymap]="$REPLY"
+      editor_info[mode]="       %B%F{102}━━━%F{208}NORMAL%F{102}━━━%f%b"
+  elif [[ "$KEYMAP" = 'viins' || "$KEYMAP" = 'main' ]];then
+      zstyle -s ':zim:input:info:keymap:primary' format 'REPLY'
+      editor_info[mode]="       %B%F{102}━━━%F{33}INSERT%F{102}━━━%f%b"
+      editor_info[keymap]="$REPLY"
 
-    if [[ "$ZLE_STATE" == *overwrite* ]]; then
-      zstyle -s ':zim:input:info:keymap:primary:overwrite' format 'REPLY'
-      editor_info[overwrite]="$REPLY"
-    else
-      zstyle -s ':zim:input:info:keymap:primary:insert' format 'REPLY'
-      editor_info[overwrite]="$REPLY"
-    fi
+      if [[ "$ZLE_STATE" == *overwrite* ]]; then
+          zstyle -s ':zim:input:info:keymap:primary:overwrite' format 'REPLY'
+          editor_info[overwrite]="$REPLY"
+      else
+          zstyle -s ':zim:input:info:keymap:primary:insert' format 'REPLY'
+          editor_info[overwrite]="$REPLY"
+      fi
+  elif [[ "$KEYMAP" = 'vivis' || "$KEYMAP" = 'vivli' || "$KEYMAP" = 'vivis' ]];then
+      zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
+      editor_info[keymap]="$REPLY"
+      editor_info[mode]="       %B%F{102}━━━%F{5}VISUAL%F{102}━━━%f%b"
   fi
 
   vimode="${editor_info[mode]}"
