@@ -12,7 +12,8 @@ fi
 WORDCHARS='*?_-.[]~&;!#$%^(){}<>'
 
 # Use human-friendly identifiers.
-zmodload zsh/terminfo
+# zmodload zsh/terminfo
+zmodload -F zsh/terminfo +b:echoti +p:terminfo
 typeset -gA key_info
 key_info=(
   'Control'          '\C-'
@@ -188,14 +189,16 @@ zle -N pound-toggle
 # Bind the keys
 
 # Expands .... to ../..
-function expand-dot-to-parent-directory-path {
-  if [[ $LBUFFER = *.. ]]; then
-    LBUFFER+='/..'
-  else
-    LBUFFER+='.'
-  fi
-}
-zle -N expand-dot-to-parent-directory-path
+if [[ ${zdouble_dot_expand} == 'true' ]]; then
+  double-dot-expand() {
+    if [[ ${LBUFFER} == *.. ]]; then
+      LBUFFER+='/..'
+    else
+      LBUFFER+='.'
+    fi
+  }
+  zle -N double-dot-expand
+fi
 
 # Displays an indicator when completing.
 function expand-or-complete-with-indicator {
@@ -217,7 +220,9 @@ zle -N expand-or-complete-with-indicator
 
 # Redisplay after completing, and avoid blank prompt after <Tab><Tab><Ctrl-C>
 expand-or-complete-with-redisplay() {
-  print -n '...'
+  local indicator
+  zstyle -s ':zim:input:info:completing' format 'indicator'
+  print -n '$indicator'
   zle expand-or-complete
   zle redisplay
 }
@@ -249,10 +254,10 @@ zle -N zle-line-finish
 #
 
 # Set the key layout.
-zstyle -s ':zim:input' key-bindings 'key_bindings'
-if [[ "$key_bindings" == (emacs|) ]]; then
+# zstyle -s ':zim:input' key-bindings 'key_bindings'
+if [[ "${zinput_mode}" == (emacs|) ]]; then
     bindkey -e
-elif [[ "$key_bindings" == vi ]]; then
+elif [[ "${zinput_mode}" == vi ]]; then
     bindkey -v
 else
     print "zim: input: invalid key bindings: $key_bindings" >&2
@@ -364,16 +369,13 @@ for keymap in 'emacs' 'viins'; do
     bindkey -M "$keymap" "$key_info[Control]I" expand-or-complete
 
     # Expand .... to ../..
-    if zstyle -t ':zim:input' dot-expansion; then
-        bindkey -M "$keymap" "." expand-dot-to-parent-directory-path
+    if [[ ${zdouble_dot_expand} == 'true' ]]; then
+        bindkey -M "$keymap" "." double-dot-expand
     fi
 
     # Display an indicator when completing.
     bindkey -M "$keymap" "$key_info[Control]I" \
         expand-or-complete-with-indicator
-
-    bindkey -M "$keymap" "${key_info[Control]}I" \
-        expand-or-complete-with-redisplay
 
     # Insert 'sudo ' at the beginning of the line.
     bindkey -M "$keymap" "${key_info[Escape]}s" prepend-sudo
