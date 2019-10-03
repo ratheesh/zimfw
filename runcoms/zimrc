@@ -60,7 +60,11 @@ ztermtitle='%n@%m:%~'
 #
 
 # Set to vi or emacs
-zinput_mode='emacs'
+zinput_mode='vi'
+# zstyle ':zim:input' key-bindings 'vi'
+zstyle ':zim:input' dot-expansion 'yes'
+zstyle ':zim:input' ps-context 'yes'
+zstyle ':zim:input' zsh_vi_word_walking 'no'
 
 # Uncomment to enable double-dot expansion. This appends '../' to your input for
 # each '.' you type after an initial '..'
