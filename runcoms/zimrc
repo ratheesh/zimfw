@@ -11,7 +11,7 @@
 # line. These dependencies are noted on the respective module's README.md.
 zmodules=(directory environment git git-info history input utility custom \
     prompt completion syntax-highlighting history-substring-search \
-    autosuggestions)
+    autosuggestions vimode)
 
 
 ###################
