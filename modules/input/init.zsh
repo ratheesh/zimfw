@@ -93,7 +93,7 @@ function editor-info {
           zstyle -s ':zim:input:info:keymap:primary:insert' format 'REPLY'
           editor_info[overwrite]="$REPLY"
       fi
-  elif [[ "$KEYMAP" = 'vivis' || "$KEYMAP" = 'vivli' || "$KEYMAP" = 'vivis' ]];then
+  elif [[ "$KEYMAP" = 'vivis' || "$KEYMAP" = 'vivli' ]];then
       zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
       editor_info[keymap]="$REPLY"
       editor_info[mode]="       %B%F{102}━━━%F{5}VISUAL%F{102}━━━%f%b"
