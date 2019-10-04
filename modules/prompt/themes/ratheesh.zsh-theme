@@ -101,7 +101,7 @@ function git_branch_name() {
 }
 
 # useful symbols            ✔
-function git_repo_status() {
+function git_info() {
     local ahead=0 behind=0 untracked=0 modified=0 deleted=0 added=0 dirty=0
     local branch
     local pos position commit
@@ -158,15 +158,16 @@ function git_repo_status() {
     git_status+=($(coalesce $branch $position $commit))
 
     local -i stashed=$(command git stash list 2>/dev/null | wc -l)
-    (( stashed )) && git_status+=("%F{7}${stashed}%B%F{63}S%f%b")
+    (( stashed > 0 )) && git_status+=("%F{7}${stashed}%B%F{63}S%f%b")
 
     (( ahead > 0 )) && git_status+=("%F{7}${ahead}%B%F{34}↑%f%b")
     (( behind > 0 )) && git_status+=("%F{7}${behind}%B%F{198}↓%f%b")
-    (( untracked > 0 )) && git_status+=("%F{7}${untracked}%B%F{162}??%f")
-    (( modified > 0 )) && git_status+=("%F{7}${modified}%B%F{202}*%f%b")
     (( added > 0 )) && git_status+=("%F{7}${added}%B%F{2}+%f%b")
-    (( renamed > 0 )) && git_status+=("%F{7}${renamed}%B%F{54}➜%f%b")
     (( deleted > 0 )) && git_status+=("%F{7}${deleted}%B%F{1}x%f%b")
+    (( modified > 0 )) && git_status+=("%F{7}${modified}%B%F{202}*%f%b")
+    (( renamed > 0 )) && git_status+=("%F{7}${renamed}%B%F{54}➜%f%b")
+    (( unmerged > 0 )) && git_status+=("%F{7}${unmerged}%B%F{1}U%f%b")
+    (( untracked > 0 )) && git_status+=("%F{7}${untracked}%B%F{162}??%f")
 
     print "$git_status"
 }
@@ -174,7 +175,7 @@ function git_repo_status() {
 function get_git_data() {
     local is_git="$(git rev-parse --is-inside-work-tree 2>/dev/null)"
     if [[ -n $is_git ]]; then
-        local infos="$(git_repo_status)%f"
+        local infos="$(git_info)%f"
         print " $infos"
     fi
 }
@@ -207,6 +208,7 @@ function prompt_ratheesh_signal() {
 }
 
 function prompt_ratheesh_precmd() {
+    setopt noxtrace noksharrays localoptions
 
     function async_thread() {
         printf "%s" "$(get_git_data)" >! "$_prompt_async_data_file"
@@ -243,8 +245,7 @@ function prompt_ratheesh_zshexit() {
 }
 
 function prompt_ratheesh_setup() {
-    setopt LOCAL_OPTIONS
-    unsetopt XTRACE KSH_ARRAYS
+    setopt localoptions noxtrace noksharrays
 
     autoload -Uz add-zsh-hook
     # autoload -Uz async && async
@@ -278,8 +279,8 @@ function prompt_ratheesh_setup() {
     fi
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
     PROMPT='%{$terminfo_down_sc$vimode$reset$terminfo[rc]%}\
-${SSH_TTY:+"%F{8}⌠%b%f%{$italic%}%F{102}%n%b%{$reset%}%F{60}@%F{131}%m%F{8}⌡%B%F{162}~%f%b"}\
-%F{8}⌠%f%b%F{60}${${${(%):-%30<...<%2~%<<}//\//%B%F{25\}/%b%{$italic%\}%F{173\}}//\~/⌂}%b%{$reset%}%F{8}⌡%f%b\
+${SSH_TTY:+"%F{60}⌠%b%f%{$italic%}%F{102}%n%b%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
+%F{60}⌠%f%b%F{97}${${${(%):-%30<...<%2~%<<}//\//%B%F{39\}/%b%{$italic%\}%F{173\}}//\~/⌂}%b%{$reset%}%F{60}⌡%f%b\
 %(!. %B%F{1}#%f%b.)%(1j.%F{8}-%F{93}%j%F{8}-%f.)${editor_info[keymap]}%{$reset_color%} '
 
     # RPROMPT=''
