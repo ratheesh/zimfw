@@ -160,7 +160,7 @@ zstyle ':completion:*:*:*:*:processes' force-list always
 zstyle ':completion:*:options' list-colors '=^(-- *)=34'
 
 # partial match coloring
-zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=2=91=2}:${(s.:.)LS_COLORS}")'
+zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=2=32=2}:${(s.:.)LS_COLORS}")'
 
 # prevent a tab from being inserted when there are no characters to the left of the cursor.
 zstyle ':completion:*' insert-tab false
