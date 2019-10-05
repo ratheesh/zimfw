@@ -164,7 +164,7 @@ function git_info() {
     (( behind > 0 )) && git_status+=("%F{7}${behind}%B%F{198}↓%f%b")
     (( added > 0 )) && git_status+=("%F{7}${added}%B%F{2}+%f%b")
     (( deleted > 0 )) && git_status+=("%F{7}${deleted}%B%F{1}x%f%b")
-    (( modified > 0 )) && git_status+=("%F{7}${modified}%B%F{202}*%f%b")
+    (( modified > 0 )) && git_status+=("%F{7}${modified}%F{202}✱%f%b")
     (( renamed > 0 )) && git_status+=("%F{7}${renamed}%B%F{54}➜%f%b")
     (( unmerged > 0 )) && git_status+=("%F{7}${unmerged}%B%F{1}U%f%b")
     (( untracked > 0 )) && git_status+=("%F{7}${untracked}%B%F{162}??%f")
@@ -182,8 +182,8 @@ function get_git_data() {
 
 function python_info() {
     # Clean up previous $python_info.
-    unset _python_info
-    typeset -gA _python_info
+    unset python_info
+    typeset -gA python_info
 
     local v_env=''
 
@@ -195,14 +195,14 @@ function python_info() {
     # print only if virtualenv is active
     if [[ -n "$VIRTUAL_ENV" ]]; then
         v_env=$(basename ${VIRTUAL_ENV})
-        _python_info=" %F{8}(%{$italic%}%F{5}venv%{$reset%}%B%F{33}:%b%F{179}${v_env}%F{8})%f%b"
+        python_info=" %F{8}(%{$italic%}%F{5}venv%{$reset%}%B%F{33}:%b%F{179}${v_env}%F{8})%f%b"
     else
-        _python_info=''
+        python_info=''
     fi
 }
 
 function prompt_ratheesh_signal() {
-    _prompt_git_info="$(cat $_prompt_async_data_file 2>/dev/null)"
+    prompt_info="$(cat $_prompt_async_data_file 2>/dev/null)"
     zle && zle reset-prompt # Redisplay prompt.
     _prompt_ratheesh_async_pid=0
 }
@@ -220,7 +220,8 @@ function prompt_ratheesh_precmd() {
 
     [[ "${_prompt_ratheesh_async_pid}" > 0 ]] && return
 
-    _prompt_git_info=''
+    prompt_info=''
+    _prompt_cur_pwd=$PWD
     # Handle updating git data. We also clear the git prompt data if we're in a
     # different git root now.
     if (( $+functions[git-dir] )); then
@@ -253,7 +254,8 @@ function prompt_ratheesh_setup() {
 
     # Get the async worker set up
     _ratheesh_cur_git_root=''
-    _prompt_git_info=''
+    _prompt_cur_pwd=''
+    prompt_info=''
 
     _prompt_ratheesh_async_pid=0
     _prompt_async_data_file="/run/user/${UID}/zsh_prompt_data.$$"
@@ -280,12 +282,12 @@ function prompt_ratheesh_setup() {
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
     PROMPT='%{$terminfo_down_sc$vimode$reset$terminfo[rc]%}\
 ${SSH_TTY:+"%F{60}⌠%b%f%{$italic%}%F{102}%n%b%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
-%F{60}⌠%f%b%F{108}${${${(%):-%30<...<%2~%<<}//\//%B%F{39\}/%b%{$italic%\}%F{173\}}//\~/⌂}%b%{$reset%}%F{60}⌡%f%b\
+%F{60}⌠%f%b%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{93\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
 %(!. %B%F{1}#%f%b.)%(1j.%F{8}-%F{93}%j%F{8}-%f.)${editor_info[keymap]}%{$reset_color%} '
 
     # RPROMPT=''
     # RPROMPT='%(?:%B%F{40}⏎%f%b:%B%F{9}⏎%f%b)$(get_python_info)'
-    RPROMPT='%(?::%B%F{9}⏎%f%b)${_python_info}${_prompt_git_info}'
+    RPROMPT='%(?::%B%F{9}⏎%f%b)${python_info}${prompt_info}'
     SPROMPT='zsh: Correct %F{1}%R%f to %F{27}%r%f ?([Y]es/[N]o/[E]dit/[A]bort)'
 }
 
