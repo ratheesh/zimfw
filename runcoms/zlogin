@@ -58,6 +58,11 @@
   # zsh-histery-substring-search
   zrecompile ${zim_mods}/history-substring-search/external/zsh-history-substring-search.zsh
 
+  # zsh-histery-substring-search
+  zrecompile ${zim_mods}/vimode/external/zsh-vimode-visual.zsh
+
+  zrecompile ${zim_mods}/autosuggestions/external/zsh-autosuggestions.zsh
+
   # Extra additions
 
   # other rc files as well
@@ -66,26 +71,21 @@
   zrecompile ${ZDOTDIR:-${HOME}}/.zprofile
   zrecompile ${ZDOTDIR:-${HOME}}/.zlogin
 
-  # Remove this check once autosuggestions is a part of zim
-  [ -f ${zim_mods}/autosuggestions/init.zsh ] && \
-      zrecompile ${zim_mods}/autosuggestions/external/zsh-autosuggestions.zsh \
-               &> /dev/null
-
   # get fzf init script compiled
   [ -f ~/.fzf.zsh ] && zrecompile ~/.fzf.zsh
 
 ) &!
 
 # Print a random, hopefully interesting, adage.
-if (( $+commands[fortune] )); then
- if [[ -t 0 || -t 1 ]]; then
-	if (( $+commands[lolcat] ));then
-		fortune -a de | cowsay -f tux | lolcat
-	else
-		fortune -a de | cowsay -f tux
-	fi
-   print
- fi
-fi
+# if (( $+commands[fortune] )); then
+#  if [[ -t 0 || -t 1 ]]; then
+# 	if (( $+commands[lolcat] ));then
+# 		fortune -a de | cowsay -f tux | lolcat
+# 	else
+# 		fortune -a de | cowsay -f tux
+# 	fi
+#    print
+#  fi
+# fi
 
 # End of File
