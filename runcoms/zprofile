@@ -126,6 +126,14 @@ fi
 # autojump configuration
 export AUTOJUMP_IGNORE_CASE=1 # ignore case in autojump completion
 export AUTOJUMP_AUTOCOMPLETE_CMDS='cp vim make'
+# lazy load autojump plugin
+function j() {
+    (( $+commands[brew] )) && {
+        local pfx=$PWD/.autojump
+        [[ -f "$pfx/etc/autojump.sh" ]] && . "$pfx/etc/autojump.sh"
+        j "$@"
+    }
+}
 
 # configure fzf plugin
 if (( $+commands[fd] ));then
