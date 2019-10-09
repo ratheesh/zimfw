@@ -2,6 +2,8 @@
 # User configuration sourced by interactive shells
 #
 
+# zmodload zsh/zprof # top of your .zshrc file
+
 # Define zim location
 export ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 
@@ -297,6 +299,8 @@ LOCAL_ZSHRC=~/.local.zshrc
 if [ -f $LOCAL_ZSHRC ];then
     source $LOCAL_ZSHRC
 fi
+
+# zprof
 
 # End of File
 
