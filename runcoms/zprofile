@@ -128,7 +128,7 @@ export AUTOJUMP_IGNORE_CASE=1 # ignore case in autojump completion
 export AUTOJUMP_AUTOCOMPLETE_CMDS='cp vim make'
 # lazy load autojump plugin
 function j() {
-    (( $+commands[brew] )) && {
+    (( $+commands[autojump] )) && {
         local pfx=$PWD/.autojump
         [[ -f "$pfx/etc/autojump.sh" ]] && . "$pfx/etc/autojump.sh"
         j "$@"
@@ -143,6 +143,10 @@ elif (( $+commands[ag] )); then
     export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
     # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 fi
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -300'"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -300'"
+
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
