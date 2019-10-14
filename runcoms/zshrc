@@ -109,7 +109,7 @@ if [[ ${keymap} = 'vicmd' ]];then
 fi # if
 
 # zsh syntax-highlighting module
-
+ZSH_HIGHLIGHT_MAXLENGTH=100
 # pattern customization - highlight dangerous ones - need to look out when used!
 typeset -A ZSH_HIGHLIGHT_PATTERNS
 # ZSH_HIGHLIGHT_PATTERNS+=('sudo'        'fg=9,bold')
