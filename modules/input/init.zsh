@@ -213,6 +213,7 @@ function expand-or-complete-with-indicator {
   fi
 
   print -Pn "$indicator"
+  sleep .1
   zle expand-or-complete
   zle redisplay
 }
