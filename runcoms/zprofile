@@ -135,23 +135,43 @@ function j() {
     }
 }
 
+# configure bat application
+if (( $+commands[bat] ));then
+    BAT_CONFIG_PATH="$HOME/bat.conf"
+else
+    echo "WARN:bat app is not installed!"
+fi
+
 # configure fzf plugin
+FZF_DEFAULT_OPTS="--no-mouse --height 50% -1 --reverse --multi --inline-info --preview='[[ \$(file --mime {}) =~ binary ]] && echo {} is a binary file || (bat --style=numbers,header,grid --color=always {} || highlight -O ansi -l {} || cat {}) 2> /dev/null | head -1000' --preview-window='right:70%' --bind='alt-j:preview-down,alt-k:preview-down,ctrl-d:preview-page-down,ctrl-u:preview-page-up'"
 if (( $+commands[fd] ));then
     export FZF_DEFAULT_COMMAND='fd --type file --follow --hidden --color=never --exclude .git'
+
+    _fzf_compgen_path() {
+        fd --hidden --follow --hidden --color=never --exclude ".git" . "$1"
+    }
+
+    # Use fd to generate the list for directory completion
+    _fzf_compgen_dir() {
+        fd --type d --hidden --follow --color=never --exclude ".git" . "$1"
+    }
 elif (( $+commands[ag] )); then
     echo 'WARN: fd command not installed!'
     export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
     # export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+else
+    echo 'WARN: fd or ag is not installed!'
 fi
-export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -300'"
-export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+
+# export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head $LINES'"
+# export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -300'"
 
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS=$FZF_DEFAULT_OPTS'
 --color=dark
---color=fg:#a0a0a0,bg:-1,hl:#FF0000,fg+:#c0c0c0,bg+:#304054,hl+:#00D700
+--color=fg:#a0a0a0,bg:-1,hl:#FF0000,fg+:#c0c0c0,bg+:#304054,hl+:#1BB1E7
 --color=info:#e79498,prompt:#fc0697,pointer:#be5046,marker:#e5c07b,spinner:#61afef,header:#61afef
 '
 
