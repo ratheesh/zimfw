@@ -80,10 +80,12 @@ function editor-info {
   if [[ "$KEYMAP" = 'vicmd' ]]; then
       zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
       editor_info[keymap]="$REPLY"
-      editor_info[mode]="       %F{102}⁃⁃⁃%B%F{208}NORMAL%F{102}%b⁃⁃⁃%f"
+      # editor_info[mode]="       %F{102}⁃⁃⁃%B%F{208}NORMAL%F{102}%b⁃⁃⁃%f"
+      editor_info[mode]="       %F{102}⁃⁃⁃%F{208}Ɲѳrmαl%F{102}⁃⁃⁃%f"
   elif [[ "$KEYMAP" = 'viins' || "$KEYMAP" = 'main' ]];then
       zstyle -s ':zim:input:info:keymap:primary' format 'REPLY'
-      editor_info[mode]="       %F{102}⁃⁃⁃%B%F{33}INSERT%F{102}%b⁃⁃⁃%f"
+      # editor_info[mode]="       %F{102}⁃⁃⁃%B%F{33}INSERT%F{102}%b⁃⁃⁃%f"
+      editor_info[mode]="       %F{102}⁃⁃⁃%F{33}¶ƞsεrt%F{102}⁃⁃⁃%f"
       editor_info[keymap]="$REPLY"
 
       if [[ "$ZLE_STATE" == *overwrite* ]]; then
@@ -96,7 +98,8 @@ function editor-info {
   elif [[ "$KEYMAP" = 'vivis' || "$KEYMAP" = 'vivli' ]];then
       zstyle -s ':zim:input:info:keymap:alternate' format 'REPLY'
       editor_info[keymap]="$REPLY"
-      editor_info[mode]="       %F{102}⁃⁃⁃%B%F{5}VISUAL%F{102}%b⁃⁃⁃%f"
+      # editor_info[mode]="       %F{102}⁃⁃⁃%B%F{5}VISUAL%F{102}%b⁃⁃⁃%f"
+      editor_info[mode]="       %F{102}⁃⁃⁃%F{5}Ʋisuαl%F{102}⁃⁃⁃%f"
   fi
 
   vimode="${editor_info[mode]}"
