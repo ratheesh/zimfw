@@ -12,3 +12,6 @@ typeset -U path
 if [[ "$SHLVL" -eq 1 && ! -o LOGIN && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
     source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
+
+# vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
+# End of File

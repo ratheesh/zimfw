@@ -231,5 +231,5 @@ if (( $+commands[virtualenvwrapper_lazy.sh] )); then
     source "$commands[virtualenvwrapper_lazy.sh]"
 fi
 
+# vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
 # End of File
-# vim: set ft=sh ff=unix ts=4 sw=4 tw=0 expandtab:

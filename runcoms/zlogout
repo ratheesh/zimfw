@@ -12,5 +12,5 @@ if [ "$SHLVL" = 1 ]; then
     [ -x /usr/bin/clear_console ] && /usr/bin/clear_console -q
 fi
 
-# End of Filear
-#
+# vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
+# End of File

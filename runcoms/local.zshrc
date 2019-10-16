@@ -14,4 +14,5 @@ path=(
 
 # Other custom configurations
 
+# vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
 # End of File

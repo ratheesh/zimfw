@@ -97,3 +97,5 @@ zssh_ids=(id_rsa id_rsa2 id_github)
 #zpacman_helper=(aur)
 
 
+# vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
+# End of File
