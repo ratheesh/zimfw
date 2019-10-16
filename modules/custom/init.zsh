@@ -35,7 +35,7 @@ alias ln='nocorrect ln'
 # alias man='nocorrect man'
 alias mkdir='nocorrect mkdir'
 alias mv='nocorrect mv'
-alias mysql='nocorrect mysql'
+# alias mysql='nocorrect mysql'
 alias rm='nocorrect rm'
 
 # Disable globbing.
@@ -114,8 +114,8 @@ else
   fi
 fi
 
-alias pbc='pbcopy'
-alias pbp='pbpaste'
+# alias pbc='pbcopy'
+# alias pbp='pbpaste'
 
 # File Download
 if (( $+commands[curl] )); then
@@ -146,23 +146,23 @@ fi
 alias ssh="TERM=xterm-256color ssh"
 
 # Serves a directory via HTTP.
-alias http-serve='python -m SimpleHTTPServer'
+# alias http-serve='python -m SimpleHTTPServer'
 
 # fasd
-alias  v='f -e vim'      # quick opening files with vim
-alias  m='f -e mplayer'  # quick opening files with mplayer
-alias  o='a -e xdg-open' # quick opening files with xdg-open
-alias  enn='f -e emacsclient -nc'
+# alias  v='f -e vim'      # quick opening files with vim
+# alias  m='f -e mplayer'  # quick opening files with mplayer
+# alias  o='a -e xdg-open' # quick opening files with xdg-open
+# alias  enn='f -e emacsclient -nc'
 
 # personalized aliases
-alias e="emacsclient -nc"
-alias ec="emacsclient -t"
-alias en="emacsclient -n"
-alias eckill="emacsclient -e '(kill-emacs)'"
+# alias e="emacsclient -nc"
+# alias ec="emacsclient -t"
+# alias en="emacsclient -n"
+# alias eckill="emacsclient -e '(kill-emacs)'"
 alias tmux='tmux -2 -u'
 alias mux="tmuxinator"
-alias ack="ack-grep --pager=\"less -R\""
-alias rsyncp='rsync -avz -e ssh --progress --partial '
+# alias ack="ack-grep --pager=\"less -R\""
+# alias rsyncp='rsync -avz -e ssh --progress --partial '
 alias peek='tee >(cat 1>&2)' # Mirror stdout to stderr, useful for seeing data going through a pipe
 
 # suffix aliases
