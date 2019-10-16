@@ -202,7 +202,7 @@ fi
 [[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && source $HOME/.autojump/etc/profile.d/autojump.sh
 
 # fzf initialization
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Load virtualenvwrapper into the shell session.
 if (( $+commands[virtualenvwrapper_lazy.sh] )); then
