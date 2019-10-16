@@ -127,13 +127,11 @@ fi
 export AUTOJUMP_IGNORE_CASE=1 # ignore case in autojump completion
 export AUTOJUMP_AUTOCOMPLETE_CMDS='cp vim make'
 # lazy load autojump plugin
-function j() {
-    (( $+commands[autojump] )) && {
-        local pfx=$PWD/.autojump
-            [[ -f "$pfx/etc/autojump.sh" ]] && . "$pfx/etc/autojump.sh"
-            j "$@"
-        }
-}
+# j() {
+#     unset -f j
+#     [[ -s $HOME/.autojump/etc/profile.d/autojump.sh ]] && . $HOME/.autojump/etc/profile.d/autojump.sh
+#     j "$@"
+# }
 
 # configure bat application
 if (( $+commands[bat] ));then
