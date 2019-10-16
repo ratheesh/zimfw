@@ -72,15 +72,15 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
-$HOME/bin
-$HOME/.local/bin
-$HOME/.autojump/bin
-/usr/local/{bin,sbin}
-/{bin,sbin}
-/usr/{bin,sbin}
-/usr/local/{bin,sbin}
-/usr/{bin,sbin}
-$path[@]
+    $HOME/bin
+    $HOME/.local/bin
+    $HOME/.autojump/bin
+    /usr/local/{bin,sbin}
+    /{bin,sbin}
+    /usr/{bin,sbin}
+    /usr/local/{bin,sbin}
+    /usr/{bin,sbin}
+    $path[@]
 )
 
 #
@@ -130,9 +130,9 @@ export AUTOJUMP_AUTOCOMPLETE_CMDS='cp vim make'
 function j() {
     (( $+commands[autojump] )) && {
         local pfx=$PWD/.autojump
-        [[ -f "$pfx/etc/autojump.sh" ]] && . "$pfx/etc/autojump.sh"
-        j "$@"
-    }
+            [[ -f "$pfx/etc/autojump.sh" ]] && . "$pfx/etc/autojump.sh"
+            j "$@"
+        }
 }
 
 # configure bat application
