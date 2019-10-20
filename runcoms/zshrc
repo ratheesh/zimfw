@@ -265,9 +265,12 @@ export stm='ARCH=arm CROSS_COMPILE=arm-none-eabi-'
 
 alias goarm='env CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 go'
 
+export GEM_HOME=$HOME/gems
+
 path=(
     /usr/lib/llvm-3.6/bin	# for clang
     /opt/SEGGER/JLink
+    $HOME/gems/bin
     $path[@]
 )
 
