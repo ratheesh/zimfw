@@ -47,7 +47,7 @@ alias history='noglob history'
 alias locate='noglob locate'
 alias rake='noglob rake'
 alias rsync='noglob rsync'
-alias scp='noglob scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+alias scp='noglob scp VisualHostKey=no'
 alias sftp='noglob sftp'
 
 # Define general aliases.
