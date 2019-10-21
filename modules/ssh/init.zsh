@@ -4,31 +4,53 @@
 
 # don't do anything unless we can actually use ssh-agent
 if (( ! ${+commands[ssh-agent]} )); then
-  return 1
+    return 1
 fi
 
-ssh-add -l &>/dev/null
-if (( ? == 2 )); then
-  # Unable to contact the authentication agent
-
-  # Load stored agent connection info
-  local ssh_env="${HOME}/.ssh-agent"
-  [[ -r ${ssh_env} ]] && source ${ssh_env} >/dev/null
-
-  ssh-add -l &>/dev/null
-  if (( ? == 2 )); then
-      # Start agent and store agent connection info
-      (umask 066; ssh-agent >! ${ssh_env})
-      source ${ssh_env} >/dev/null
-  fi
+# use a sane temp dir; creating 1k ssh-* files in /tmp is crazy
+if [[ ${TMPDIR} ]]; then
+    local ssh_env=${TMPDIR}/ssh-agent.env
+    local ssh_sock=${TMPDIR}/ssh-agent.sock
+else
+    # create a sane tmp dir at /tmp/username
+    mkdir -p /tmp/${USER}
+    local ssh_env=/tmp/${USER}/ssh-agent.env
+    local ssh_sock=/tmp/${USER}/ssh-agent.sock
 fi
 
-# Load identities
-ssh-add -l &>/dev/null
-if (( ? == 1 )); then
-  if (( ${#zssh_ids} > 0 )); then
-    ssh-add "${HOME}/.ssh/${^zssh_ids[@]}" 2> /dev/null
-  else
-    ssh-add 2> /dev/null
-  fi
+# update ssh agent parameters if incorrectly set
+# (( ! ${+SSH_AGENT_PID} )) && [ -f $ssh_env ] && unset SSH_AUTH_SOCK
+(( ! ${+SSH_AGENT_PID} )) && unset SSH_AUTH_SOCK
+
+# start ssh-agent if not already running
+if [[ ! -S ${SSH_AUTH_SOCK} ]]; then
+    # read environment if possible
+    if [ -f ${ssh_env} ];then
+        source ${ssh_env} 2> /dev/null
+    else
+        killall ssh-agent
+    fi
+
+    if ! ps -U ${LOGNAME} -o pid,ucomm | grep -q -- "${SSH_AGENT_PID:--1} ssh-agent"; then
+        eval "$(ssh-agent | sed '/^echo /d' | tee ${ssh_env})"
+    fi
 fi
+
+# create socket
+if [[ -S ${SSH_AUTH_SOCK} && ${SSH_AUTH_SOCK} != ${ssh_sock} ]]; then
+    ln -sf ${SSH_AUTH_SOCK} ${ssh_sock}
+    export SSH_AUTH_SOCK=${ssh_sock}
+fi
+
+# load ids
+if ssh-add -l 2>&1 | grep -q 'no identities'; then
+    if (( ${#zssh_ids} > 0 )); then
+        ssh-add "${HOME}/.ssh/${^zssh_ids[@]}" 2> /dev/null
+    else
+        ssh-add 2> /dev/null
+    fi
+fi
+
+unset ssh_{sock,env}
+
+# End of File
