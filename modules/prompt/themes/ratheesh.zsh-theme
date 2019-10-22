@@ -280,7 +280,7 @@ function prompt_ratheesh_setup() {
         reset=''
     fi
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
-    PROMPT='%{$terminfo_down_sc$italic$vimode$reset$terminfo[rc]%}\
+    PROMPT='%{$terminfo_down_sc${editor_info[mode]}$reset$terminfo[rc]%}\
 ${SSH_TTY:+"%F{60}⌠%b%f%{$italic%}%F{102}%n%b%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
 %F{60}⌠%f%b%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{5\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
 %(!. %B%F{1}#%f%b.)%(1j.%F{8}-%F{93}%j%F{8}-%f.)${editor_info[keymap]}%{$reset_color%} '

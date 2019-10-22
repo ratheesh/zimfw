@@ -99,7 +99,6 @@ function editor-info {
       editor_info[mode]="       %F{102}⁃⁃⁃%B%F{5}VISUAL%F{102}%b⁃⁃⁃%f"
   fi
 
-  vimode="${editor_info[mode]}"
   unset REPLY
   zle zle-reset-prompt
 }
