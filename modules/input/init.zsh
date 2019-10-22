@@ -112,11 +112,11 @@ function zle-reset-prompt {
     # If we arent within one of the specified contexts, then we want to reset
     # the prompt with the appropriate editor_info[keymap] if there is one.
     if [[ $CONTEXT != (select|cont) ]]; then
-      zle reset-prompt
+      zle .reset-prompt
       zle -R
     fi
   else
-    zle reset-prompt
+    zle .reset-prompt
     zle -R
   fi
 }

@@ -203,7 +203,7 @@ function python_info() {
 
 function prompt_ratheesh_signal() {
     prompt_info="$(cat $_prompt_async_data_file 2>/dev/null)"
-    zle && zle reset-prompt # Redisplay prompt.
+    zle && zle .reset-prompt
     _prompt_ratheesh_async_pid=0
 }
 
