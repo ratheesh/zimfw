@@ -115,7 +115,7 @@ function git_info() {
     # check if the current commit is at a tag point
     local tag_at_current_commit=$(git describe --exact-match --tags $current_commit_hash 2> /dev/null)
     if [[ -n $tag_at_current_commit ]]; then
-        tag_at_current_commit="%F{8}(%b%{$italic%}%F{178}tag%{$reset%}%B%F{198}:%f%b%F{66}${tag_at_current_commit}%F{8})%f%b"
+        tag_at_current_commit="%F{60}(%b%{$italic%}%F{178}tag%{$reset%}%B%F{198}:%f%b%F{66}${tag_at_current_commit}%F{60})%f%b"
     fi
 
     if [[ -n $branch_name ]] && \
@@ -282,7 +282,7 @@ function prompt_ratheesh_setup() {
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
     PROMPT='%{$terminfo_down_sc${editor_info[mode]}$reset$terminfo[rc]%}\
 ${SSH_TTY:+"%F{60}⌠%f%{$italic%}%F{102}%n%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
-%F{60}⌠%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{5\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
+%F{60}⌠%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{33\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
 %(!. %B%F{1}#%f%b.)%(1j.%F{8}-%F{93}%j%F{8}-%f.)${editor_info[keymap]}%{$reset_color%} '
 
     # RPROMPT=''
