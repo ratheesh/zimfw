@@ -297,12 +297,6 @@ fi
 alias vi=vim
 alias vim=nvim
 
-# Fix for slow git completion
-# URL: https://stackoverflow.com/questions/9810327/zsh-auto-completion-for-git-takes-significant-amount-of-time-can-i-turn-it-off
-__git_files () {
-    _wanted files expl 'local files' _files
-}
-
 # Source local settings file
 LOCAL_ZSHRC=~/.local.zshrc
 if [ -f $LOCAL_ZSHRC ];then
