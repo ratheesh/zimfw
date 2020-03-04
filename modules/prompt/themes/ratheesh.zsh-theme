@@ -1,3 +1,4 @@
+#  vim: set ft=zsh ff=unix ts=8 sw=4 tw=0 expandtab:
 #
 # Ratheesh's theme based on minimal theme
 # few git functions are copied from sorin's theme in prezto
@@ -119,7 +120,7 @@ function git_info() {
     fi
 
     if [[ -n $branch_name ]] && \
-     branch=("%B%F{129}«%B%F{11}±%f%b%F{33}${branch_name}%F{142}%b${tag_at_current_commit:-""}%B%F{129}»%f%b")
+     branch=("%B%F{129}«%B%F{11}±%f%b%{$italic%}%F{33}${branch_name}%F{142}%b${tag_at_current_commit:-""}%B%F{129}»%f%b")
     if [[ -z "${branch_name//}" ]]; then
         pos="$(git describe --contains --all HEAD 2> /dev/null)"
         position="%B%F{8}ǁ%b%F{196}%F{7}${pos}%B%F{8}ǁ%f%b"
@@ -201,55 +202,84 @@ function python_info() {
     fi
 }
 
-function prompt_ratheesh_signal() {
-    prompt_info="$(cat $_prompt_async_data_file 2>/dev/null)"
-    zle && zle .reset-prompt
-    _prompt_ratheesh_async_pid=0
+function prompt_ratheesh_async_callback {
+  case $1 in
+    prompt_ratheesh_async_git)
+          prompt_info=$3
+          zle && zle reset-prompt
+      ;;
+  esac
 }
+
+function prompt_ratheesh_async_git {
+  cd -q "$1"
+  printf "%s" "$(get_git_data)"
+}
+
+function prompt_ratheesh_async_tasks {
+  if (( !${prompt_ratheesh_async_init:-0} )); then
+    async_start_worker prompt_ratheesh -n
+    async_register_callback prompt_ratheesh prompt_ratheesh_async_callback
+    typeset -g prompt_ratheesh_async_init=1
+  fi
+
+  # Kill the old process of slow commands if it is still running.
+  async_flush_jobs prompt_ratheesh
+
+  # Compute slow commands in the background.
+  async_job prompt_ratheesh prompt_ratheesh_async_git "$PWD"
+}
+
+# function prompt_ratheesh_signal() {
+#     prompt_info="$(cat $_prompt_async_data_file 2>/dev/null)"
+#     zle && zle .reset-prompt
+#     _prompt_ratheesh_async_pid=0
+# }
 
 function prompt_ratheesh_precmd() {
     setopt noxtrace noksharrays localoptions
 
-    function async_thread() {
-        printf "%s" "$(get_git_data)" >! "$_prompt_async_data_file"
-        kill -WINCH $$
-    }
+    # function async_thread() {
+    #     printf "%s" "$(get_git_data)" >! "$_prompt_async_data_file"
+    #     kill -WINCH $$
+    # }
+
 
     # Get python virtualenv info
     python_info
 
-    [[ "${_prompt_ratheesh_async_pid}" > 0 ]] && return
+    # [[ "${_prompt_ratheesh_async_pid}" > 0 ]] && return
 
-    prompt_info=''
     _prompt_cur_pwd=$PWD
-    # Handle updating git data. We also clear the git prompt data if we're in a
-    # different git root now.
+
     if (( $+functions[git-dir] )); then
         local new_git_root="$(git-dir 2> /dev/null)"
-        if [[ $new_git_root = '' ]];then
-            [[ -a $_prompt_async_data_file ]] && rm -f $_prompt_async_data_file &> /dev/null
-            return
-        else
-            [[ $new_git_root != $_ratheesh_cur_git_root ]] && _ratheesh_cur_git_root=$new_git_root
+        if [[ $new_git_root != $_ratheesh_cur_git_root ]];then
+            prompt_info=''
+            _ratheesh_cur_git_root=$new_git_root
         fi
     fi
 
     # Compute slow commands in the background.
-    trap prompt_ratheesh_signal WINCH
-    async_thread &!
-    _prompt_ratheesh_async_pid=$!
+    # trap prompt_ratheesh_signal WINCH
+    # async_thread &!
+    # _prompt_ratheesh_async_pid=$!
+
+    prompt_ratheesh_async_tasks
 }
 
 function prompt_ratheesh_zshexit() {
     # remove prompt data to avoid littering
-    [[ -a $_prompt_async_data_file ]] && rm -f $_prompt_async_data_file &> /dev/null
+    # [[ -a $_prompt_async_data_file ]] && rm -f $_prompt_async_data_file &> /dev/null
 }
 
 function prompt_ratheesh_setup() {
     setopt localoptions noxtrace noksharrays
 
     autoload -Uz add-zsh-hook
-    # autoload -Uz async && async
+    autoload -Uz async && async
+    autoload -Uz +X add-zle-hook-widget 2>/dev/null
+
     prompt_opts=(cr percent sp subst)
 
     # Get the async worker set up
@@ -257,9 +287,12 @@ function prompt_ratheesh_setup() {
     _prompt_cur_pwd=''
     prompt_info=''
 
-    _prompt_ratheesh_async_pid=0
-    _prompt_async_data_file="/run/user/${UID}/zsh_prompt_data.$$"
+    # _prompt_ratheesh_async_pid=0
+    # _prompt_async_data_file="/run/user/${UID}/zsh_prompt_data.$$"
 
+    trap prompt_ratheesh_zshexit TERM
+    trap prompt_ratheesh_zshexit INT
+    trap prompt_ratheesh_zshexit KILL
     add-zsh-hook precmd prompt_ratheesh_precmd
     add-zsh-hook zshexit prompt_ratheesh_zshexit
 
@@ -282,7 +315,7 @@ function prompt_ratheesh_setup() {
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
     PROMPT='%{$terminfo_down_sc${editor_info[mode]}$reset$terminfo[rc]%}\
 ${SSH_TTY:+"%F{60}⌠%f%{$italic%}%F{102}%n%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
-%F{60}⌠%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{33\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
+%F{60}⌠%F{67}${${${(%):-%30<...<%2~%<<}//\//%B%F{93\}/%b%{$italic%\}%F{173\}}//\~/%B⌂%b}%b%{$reset%}%F{60}⌡%f%b\
 %(!. %B%F{1}#%f%b.)%(1j.%F{8}-%F{93}%j%F{8}-%f.)${editor_info[keymap]}%{$reset_color%} '
 
     # RPROMPT=''
@@ -306,5 +339,4 @@ prompt_ratheesh_preview () {
 
 prompt_ratheesh_setup "${@}"
 
-#  vim: set ft=zsh ff=unix ts=8 sw=4 tw=0 expandtab:
 # End of File
