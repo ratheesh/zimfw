@@ -298,10 +298,8 @@ alias vi=vim
 alias vim=nvim
 
 # Source local settings file
-LOCAL_ZSHRC=~/.local.zshrc
-if [ -f $LOCAL_ZSHRC ];then
-    source $LOCAL_ZSHRC
-fi
+LOCAL_ZSHRC=$HOME/.local.zshrc
+[[ -f $LOCAL_ZSHRC ]] && source $LOCAL_ZSHRC
 
 # zprof
 
