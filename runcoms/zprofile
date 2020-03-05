@@ -76,6 +76,7 @@ path=(
     $HOME/bin
     $HOME/.local/bin
     $HOME/.autojump/bin
+    $HOME/.cargo/bin
     /usr/local/{bin,sbin}
     /{bin,sbin}
     /usr/{bin,sbin}
