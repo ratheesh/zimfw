@@ -199,6 +199,10 @@ for keymap in 'emacs' 'viins' 'vicmd'; do
     bindkey -M ${keymap} '^ ' my-autosuggest-accept
 done
 
+for keymap in  'emacs' 'viins' 'vicmd'; do
+    bindkey -M ${keymap} '^k' vi-forward-word
+done
+
 # bindkey "^M" accept-line
 # ZSH_AUTOSUGGEST_STRATEGY='match_prev_cmd'
 # ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(emacs-forward-word)
