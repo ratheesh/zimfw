@@ -1,8 +1,11 @@
+#!/usr/bin/env zsh
 #  vim: set ft=zsh ff=unix ts=8 sw=4 tw=0 expandtab:
 #
-# Ratheesh's theme based on minimal theme
-# few git functions are copied from sorin's theme in prezto
+# My custom theme based on minimal theme
+# Few git functions are copied from sorin's theme in prezto
 #
+# async theme without zpty is refered from
+# https://github.com/woefe/git-prompt.zsh
 
 # Gets the Git special action (am, bisect, cherry, merge, rebase).
 # Borrowed from vcs_info and edited.
@@ -185,7 +188,6 @@ function python_info() {
     # Clean up previous $python_info.
     unset python_info
     typeset -gA python_info
-
     local v_env=''
 
     if (( ! $+commands[python] )); then
@@ -202,53 +204,77 @@ function python_info() {
     fi
 }
 
-function prompt_ratheesh_async_callback {
-  case $1 in
-    prompt_ratheesh_async_git)
-          prompt_info=$3
-          zle && zle reset-prompt
-      ;;
-  esac
+function _zsh_git_prompt_async_request() {
+    typeset -g _ZSH_GIT_PROMPT_ASYNC_FD _ZSH_GIT_PROMPT_ASYNC_PID
+
+    # If we've got a pending request, cancel it
+    if [[ -n "$_ZSH_GIT_PROMPT_ASYNC_FD" ]] && { true <&$_ZSH_GIT_PROMPT_ASYNC_FD } 2>/dev/null; then
+
+        # Close the file descriptor and remove the handler
+        exec {_ZSH_GIT_PROMPT_ASYNC_FD}<&-
+        zle -F $_ZSH_GIT_PROMPT_ASYNC_FD
+
+        # Zsh will make a new process group for the child process only if job
+        # control is enabled (MONITOR option)
+        if [[ -o MONITOR ]]; then
+            # Send the signal to the process group to kill any processes that may
+            # have been forked by the suggestion strategy
+            kill -TERM -$_ZSH_GIT_PROMPT_ASYNC_PID 2>/dev/null
+        else
+            # Kill just the child process since it wasn't placed in a new process
+            # group. If the suggestion strategy forked any child processes they may
+            # be orphaned and left behind.
+            kill -TERM $_ZSH_GIT_PROMPT_ASYNC_PID 2>/dev/null
+        fi
+    fi
+
+    # Fork a process to fetch the git status and open a pipe to read from it
+    exec {_ZSH_GIT_PROMPT_ASYNC_FD}< <(
+        # Tell parent process our pid
+        echo $sysparams[pid]
+        get_git_data
+    )
+
+    # There's a weird bug here where ^C stops working unless we force a fork
+    # See https://github.com/zsh-users/zsh-autosuggestions/issues/364
+    command true
+
+    # Read the pid from the child process
+    read _ZSH_GIT_PROMPT_ASYNC_PID <&$_ZSH_GIT_PROMPT_ASYNC_FD
+
+    # When the fd is readable, call the response handler
+    zle -F "$_ZSH_GIT_PROMPT_ASYNC_FD" _zsh_git_prompt_callback
 }
 
-function prompt_ratheesh_async_git {
-  cd -q "$1"
-  printf "%s" "$(get_git_data)"
+# Called when new data is ready to be read from the pipe
+# First arg will be fd ready for reading
+# Second arg will be passed in case of error
+function _zsh_git_prompt_callback() {
+    emulate -L zsh
+
+    if [[ -z "$2" || "$2" == "hup" ]]; then
+        # Read output from fd
+        prompt_info="$(cat <&$1)"
+
+        zle reset-prompt
+        zle -R
+
+        # Close the fd
+        exec {1}<&-
+    fi
+
+    # Always remove the handler
+    zle -F "$1"
+
+    # Unset global FD variable to prevent closing user created FDs in the precmd hook
+    unset _ZSH_GIT_PROMPT_ASYNC_FD
 }
-
-function prompt_ratheesh_async_tasks {
-  if (( !${prompt_ratheesh_async_init:-0} )); then
-    async_start_worker prompt_ratheesh -n
-    async_register_callback prompt_ratheesh prompt_ratheesh_async_callback
-    typeset -g prompt_ratheesh_async_init=1
-  fi
-
-  # Kill the old process of slow commands if it is still running.
-  async_flush_jobs prompt_ratheesh
-
-  # Compute slow commands in the background.
-  async_job prompt_ratheesh prompt_ratheesh_async_git "$PWD"
-}
-
-# function prompt_ratheesh_signal() {
-#     prompt_info="$(cat $_prompt_async_data_file 2>/dev/null)"
-#     zle && zle .reset-prompt
-#     _prompt_ratheesh_async_pid=0
-# }
 
 function prompt_ratheesh_precmd() {
     setopt noxtrace noksharrays localoptions
 
-    # function async_thread() {
-    #     printf "%s" "$(get_git_data)" >! "$_prompt_async_data_file"
-    #     kill -WINCH $$
-    # }
-
-
     # Get python virtualenv info
     python_info
-
-    # [[ "${_prompt_ratheesh_async_pid}" > 0 ]] && return
 
     _prompt_cur_pwd=$PWD
 
@@ -260,12 +286,8 @@ function prompt_ratheesh_precmd() {
         fi
     fi
 
-    # Compute slow commands in the background.
-    # trap prompt_ratheesh_signal WINCH
-    # async_thread &!
-    # _prompt_ratheesh_async_pid=$!
+    _zsh_git_prompt_async_request
 
-    prompt_ratheesh_async_tasks
 }
 
 function prompt_ratheesh_zshexit() {
@@ -275,6 +297,8 @@ function prompt_ratheesh_zshexit() {
 
 function prompt_ratheesh_setup() {
     setopt localoptions noxtrace noksharrays
+
+    zmodload zsh/system
 
     autoload -Uz add-zsh-hook
     autoload -Uz async && async
@@ -287,14 +311,17 @@ function prompt_ratheesh_setup() {
     _prompt_cur_pwd=''
     prompt_info=''
 
-    # _prompt_ratheesh_async_pid=0
-    # _prompt_async_data_file="/run/user/${UID}/zsh_prompt_data.$$"
-
     trap prompt_ratheesh_zshexit TERM
     trap prompt_ratheesh_zshexit INT
     trap prompt_ratheesh_zshexit KILL
-    add-zsh-hook precmd prompt_ratheesh_precmd
     add-zsh-hook zshexit prompt_ratheesh_zshexit
+
+    # Notify if git package is not installed in the system
+    if (( ! $+commands[git] )); then
+        prompt_info='%B%F{9}Git not installed!%f%b'
+    else
+        add-zsh-hook precmd prompt_ratheesh_precmd
+    fi
 
     # Set editor-info parameters.
     zstyle ':zim:input:info:completing' format '%B%F{9}∙∙∙∙∙%f%b'
@@ -331,6 +358,7 @@ prompt_ratheesh_preview () {
   if (( ${#} )); then
     prompt_preview_theme ratheesh "${@}"
   else
+    prompt_info=''
     prompt_preview_theme ratheesh
     print
     prompt_preview_theme eriner black blue green yellow
