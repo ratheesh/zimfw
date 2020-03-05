@@ -271,9 +271,11 @@ path=(
     /usr/lib/llvm-3.6/bin	# for clang
     /opt/SEGGER/JLink
     $HOME/gems/bin
+    $HOME/go/bin
     $path[@]
 )
 
+GOPATH=$HOME/go
 PATH="/home/ratheesh/perl5/bin${PATH:+:${PATH}}"; export PATH;
 PERL5LIB="/home/ratheesh/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
 PERL_LOCAL_LIB_ROOT="/home/ratheesh/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
