@@ -238,8 +238,8 @@ zle_highlight+=(paste:none)
 # bindkey '^ ' magic-space          # control-space to bypass completion
 bindkey -M isearch " " magic-space # normal space during searches
 
-# initialize fzf here.
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# Initialize fzf - https://github.com/junegunn/fzf
+[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
 
 # Customize to your needs...
 # add custom users for auto completion
