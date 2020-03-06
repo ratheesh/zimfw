@@ -211,7 +211,9 @@ function expand-or-complete-with-indicator {
     return
   fi
 
+  [[ -n "$terminfo[rmam]" && -n "$terminfo[smam]" ]] && echoti rmam
   print -Pn "$indicator"
+  [[ -n "$terminfo[rmam]" && -n "$terminfo[smam]" ]] && echoti smam
   sleep .1
   zle expand-or-complete
   zle redisplay
