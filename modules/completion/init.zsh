@@ -18,6 +18,9 @@ fpath=(${0:h}/external/src ${fpath})
 # load and initialize the completion system
 autoload -Uz compinit && compinit -C -d "${ZDOTDIR:-${HOME}}/${zcompdump_file:-.zcompdump}"
 
+# set any compdefs
+source ${0:h}/compdefs.zsh
+
 
 #
 # zsh options
@@ -87,7 +90,7 @@ zstyle ':completion:*:history-words' list false
 zstyle ':completion:*:history-words' menu yes
 
 # ignore multiple entries.
-zstyle ':completion:*:(rm|kill|diff):*' ignore-line other
+zstyle ':completion:*:(git|rm|kill|diff):*' ignore-line other
 zstyle ':completion:*:rm:*' file-patterns '*:all-files'
 
 # If the _my_hosts function is defined, it will be called to add the ssh hosts
@@ -213,6 +216,18 @@ zstyle -e ':completion:*:users' users 'local user; getent passwd | while IFS=: r
 
 # smart editor completion
 zstyle ':completion:*:(nano|vim|nvim|vi|emacs|e):*' ignored-patterns '*.(wav|mp3|flac|ogg|mp4|avi|mkv|webm|iso|dmg|so|o|a|bin|exe|dll|pcap|7z|zip|tar|gz|bz2|rar|deb|pkg|gzip|pdf|mobi|epub|png|jpeg|jpg|gif)'
+
+# Don't complete uninteresting users
+zstyle ':completion:*:*:*:users' ignored-patterns \
+    adm amanda apache at avahi avahi-autoipd beaglidx bin cacti canna \
+    clamav daemon dbus distcache dnsmasq dovecot fax ftp games gdm \
+    gkrellmd gopher hacluster haldaemon halt hsqldb ident junkbust kdm \
+    ldap lp mail mailman mailnull man messagebus  mldonkey mysql nagios \
+    named netdump news nfsnobody nobody nscd ntp nut nx obsrun openvpn \
+    operator pcap polkitd postfix postgres privoxy pulse pvm quagga radvd \
+    rpc rpcuser rpm rtkit scard shutdown squid sshd statd svn sync tftp \
+    usbmux uucp vcsa wwwrun xfs '_*'
+    zstyle '*' single-ignored show
 
 # SSH/SCP/RSYNC
 zstyle ':completion:*:(scp|rsync):*' tag-order 'hosts:-host:host hosts:-domain:domain hosts:-ipaddr:ip\ address *'
