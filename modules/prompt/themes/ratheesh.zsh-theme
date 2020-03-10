@@ -291,8 +291,6 @@ function prompt_ratheesh_precmd() {
 }
 
 function prompt_ratheesh_zshexit() {
-    # remove prompt data to avoid littering
-    # [[ -a $_prompt_async_data_file ]] && rm -f $_prompt_async_data_file &> /dev/null
 }
 
 function prompt_ratheesh_setup() {
@@ -301,7 +299,7 @@ function prompt_ratheesh_setup() {
     zmodload zsh/system
 
     autoload -Uz add-zsh-hook
-    autoload -Uz async && async
+    # autoload -Uz async && async
     autoload -Uz +X add-zle-hook-widget 2>/dev/null
 
     prompt_opts=(cr percent sp subst)
