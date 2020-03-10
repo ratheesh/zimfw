@@ -188,15 +188,16 @@ zle_highlight=(region:bg=132,fg=0 \
     paste:standout)
 
 # zsh auto-suggestions module
-my-autosuggest-accept() {
-    zle autosuggest-accept
-    zle redisplay
-    zle redisplay
-}
-zle -N my-autosuggest-accept
-ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=my-autosuggest-accept
+# my-autosuggest-accept() {
+#     zle autosuggest-accept
+#     zle redisplay
+#     zle redisplay
+# }
+# zle -N my-autosuggest-accept
+# ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=my-autosuggest-accept
 for keymap in 'emacs' 'viins' 'vicmd'; do
-    bindkey -M ${keymap} '^ ' my-autosuggest-accept
+#     bindkey -M ${keymap} '^ ' my-autosuggest-accept
+    bindkey -M ${keymap} '^ ' autosuggest-accept
 done
 
 for keymap in  'emacs' 'viins' 'vicmd'; do
