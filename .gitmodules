@@ -32,3 +32,6 @@
 [submodule "modules/forgit/external"]
 	path = modules/forgit/external
 	url = https://github.com/wfxr/forgit.git
+[submodule "modules/fast-syntax-highlighting/external"]
+	path = modules/fast-syntax-highlighting/external
+	url = https://github.com/zdharma/fast-syntax-highlighting.git
