@@ -424,8 +424,11 @@ for keymap in 'emacs' 'viins'; do
     done
 
     # Duplicate the previous word.
+    autoload -Uz copy-earlier-word
+    zle -N copy-earlier-word
     for key in "$key_info[Escape]"{M,m};do
-        bindkey -M "$keymap" "$key" copy-prev-shell-word
+        # bindkey -M "$keymap" "$key" copy-prev-shell-word
+        bindkey -M "$keymap" "$key" copy-earlier-word
     done
 
     # Use a more flexible push-line.
