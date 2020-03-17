@@ -256,8 +256,12 @@ function _zsh_git_prompt_callback() {
         # Read output from fd
         prompt_info="$(cat <&$1)"
 
-        zle reset-prompt
-        zle -R
+        if [[ "${old_prompt_info}" != "${prompt_info}" ]];then
+            zle reset-prompt
+            zle -R
+            old_prompt_info=${prompt_info}
+        fi
+
 
         # Close the fd
         exec {1}<&-
@@ -307,6 +311,7 @@ function prompt_ratheesh_setup() {
     # Get the async worker set up
     _ratheesh_cur_git_root=''
     _prompt_cur_pwd=''
+    old_prompt_info=""
     prompt_info=''
 
     trap prompt_ratheesh_zshexit TERM
