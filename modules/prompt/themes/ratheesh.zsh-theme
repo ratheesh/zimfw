@@ -4,8 +4,9 @@
 # My custom theme based on minimal theme
 # Few git functions are copied from sorin's theme in prezto
 #
-# async theme without zpty is refered from
-# https://github.com/woefe/git-prompt.zsh
+# Async prompt without zpty.
+# Reference: https://github.com/woefe/git-prompt.zsh
+
 
 # Gets the Git special action (am, bisect, cherry, merge, rebase).
 # Borrowed from vcs_info and edited.
@@ -262,7 +263,6 @@ function _zsh_git_prompt_callback() {
             old_prompt_info=${prompt_info}
         fi
 
-
         # Close the fd
         exec {1}<&-
     fi
@@ -342,6 +342,7 @@ function prompt_ratheesh_setup() {
         italic=''
         reset=''
     fi
+
     terminfo_down_sc=$terminfo[cud1]$terminfo[cuu1]$terminfo[sc]$terminfo[cud1]
     PROMPT='%{$terminfo_down_sc${editor_info[mode]}$reset$terminfo[rc]%}\
 ${SSH_TTY:+"%F{60}⌠%f%{$italic%}%F{102}%n%{$reset%}%F{60}@%F{131}%m%F{60}⌡%B%F{162}~%f%b"}\
