@@ -2,7 +2,6 @@
 # Completion enhancements
 #
 
-
 #
 # initialization
 #
@@ -21,7 +20,6 @@ autoload -Uz compinit && compinit -C -d "${ZDOTDIR:-${HOME}}/${zcompdump_file:-.
 # set any compdefs
 source ${0:h}/compdefs.zsh
 
-
 #
 # zsh options
 #
@@ -38,7 +36,6 @@ setopt NO_CASE_GLOB
 
 # Don't beep on an ambiguous completion.
 setopt NO_LIST_BEEP
-
 
 #
 # completion module options
@@ -161,6 +158,10 @@ zstyle ':completion:*:bd:*' list-colors '=^(-- *)=34'
 zstyle ':completion:*:*:*:*:processes' force-list always
 
 zstyle ':completion:*:options' list-colors '=^(-- *)=34'
+
+#generic completion with --help
+compdef _gnu_generic gcc
+compdef _gnu_generic gdb
 
 # partial match coloring
 zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=2=32=2}:${(s.:.)LS_COLORS}")'
