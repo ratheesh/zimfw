@@ -207,6 +207,7 @@ function expand-or-complete-with-indicator {
   # This is included to work around a bug in zsh which shows up when interacting
   # with multi-line prompts.
   if [[ -z "$indicator" ]]; then
+    sleep .1
     zle expand-or-complete
     return
   fi
@@ -225,6 +226,7 @@ expand-or-complete-with-redisplay() {
   local indicator
   zstyle -s ':zim:input:info:completing' format 'indicator'
   print -n '$indicator'
+  sleep .1
   zle expand-or-complete
   zle redisplay
 }
