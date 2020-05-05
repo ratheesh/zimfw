@@ -224,22 +224,22 @@ function psu {
 }
 
 # colorize man pages
-if (( $+commands[bat] ));then
-    export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-else
+# if (( $+commands[bat] ));then
+#     export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+# else
     man() {
         env                                 \
             LESS='-QRS'                     \
-            LESS_TERMCAP_mb=$'\E[0;93m'     \
-            LESS_TERMCAP_md=$'\E[0;94m'     \
-            LESS_TERMCAP_me=$'\E[0m'        \
-            LESS_TERMCAP_se=$'\E[0m'        \
-            LESS_TERMCAP_so=$'\E[3;103;34m' \
-            LESS_TERMCAP_ue=$'\E[0m'        \
-            LESS_TERMCAP_us=$'\E[3;93m'     \
+            LESS_TERMCAP_mb=$'\e[0;93m'     \
+            LESS_TERMCAP_md=$'\e[0;94m'     \
+            LESS_TERMCAP_me=$'\e[0m'        \
+            LESS_TERMCAP_se=$'\e[0m'        \
+            LESS_TERMCAP_so=$'\e[3;103;34m' \
+            LESS_TERMCAP_ue=$'\e[0m'        \
+            LESS_TERMCAP_us=$'\e[3;93m'     \
             man "$@"
         }
-fi
+# fi
 
 # auto expand aliases
 ealiases=(  l la ll lm lr lx lk lt lc lu sl get \
