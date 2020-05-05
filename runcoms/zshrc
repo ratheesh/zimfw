@@ -94,7 +94,7 @@ export KEYTIMEOUT=1
 # history substring search module
 HISTORY_SUBSTRING_SEARCH_FUZZY=true
 HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=true
-HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=233,fg=40,underline'
+HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=233,fg=220,underline'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=234,fg=196,underline'
 for keymap in 'emacs' 'viins' 'vicmd'; do
     bindkey -M ${keymap} "^p" history-substring-search-up
