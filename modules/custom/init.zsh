@@ -167,11 +167,14 @@ alias peek='tee >(cat 1>&2)' # Mirror stdout to stderr, useful for seeing data g
 
 # suffix aliases
 alias -s c=vim
+alias -s cpp=vim
+alias -s ini=vim
+alias -s go=vim
 alias -s h=vim
-# alias -s zsh=vim
-# alias -s sh=vim
-# alias -s py=vim
-alias -s h=vim
+alias -s zsh=vim
+alias -s sh=vim
+alias -s py=vim
+alias -s txt=vim
 alias -s log=less
 
 #
