@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 #
 # Editor and input char assignment
 #
@@ -496,4 +497,5 @@ fi
 
 unset key{,map,_bindings}
 
+#  vim: set ft=zsh ff=unix ts=8 sw=4 tw=0 expandtab:
 # End of File
