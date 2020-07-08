@@ -171,9 +171,9 @@ alias -s cpp=vim
 alias -s ini=vim
 alias -s go=vim
 alias -s h=vim
-alias -s zsh=vim
-alias -s sh=vim
-alias -s py=vim
+# alias -s zsh=vim
+# alias -s sh=vim
+# alias -s py=vim
 alias -s txt=vim
 alias -s log=less
 
