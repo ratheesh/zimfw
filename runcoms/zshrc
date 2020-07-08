@@ -204,6 +204,8 @@ for keymap in  'emacs' 'viins' 'vicmd'; do
     bindkey -M ${keymap} '^k' vi-forward-word
 done
 
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#606060"
+
 # bindkey "^M" accept-line
 # ZSH_AUTOSUGGEST_STRATEGY='match_prev_cmd'
 # ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(emacs-forward-word)
@@ -241,7 +243,7 @@ zle_highlight+=(paste:none)
 
 # global alias expansion keys
 # bindkey '^ ' magic-space          # control-space to bypass completion
-bindkey -M isearch " " magic-space # normal space during searches
+# bindkey -M isearch " " magic-space # normal space during searches
 
 # Initialize fzf - https://github.com/junegunn/fzf
 [ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
@@ -313,3 +315,5 @@ LOCAL_ZSHRC=$HOME/.local.zshrc
 # vim: set ft=zsh ff=unix ts=4 sw=4 tw=0 expandtab:
 # End of File
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
