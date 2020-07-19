@@ -1,0 +1,29 @@
+alternate () {
+  local alter words i j
+  i=1
+  j=0
+  words=("${(z)LBUFFER}")
+  if [[ $words[$i] = git ]]
+  then
+    alter=(add branch checkout status commit merge)
+  elif [[ $words[$i] = systemctl ]]
+  then
+    alter=(start enable status)
+  else
+    return 0
+  fi
+  (( i++ ))
+  while [[ $words[$i] = -* ]]
+  do
+    (( i++ ))
+  done
+  j=${alter[(ie)$words[$i]]}
+  if [[ $j -lt ${#alter} ]]
+  then
+    (( j++ ))
+  else
+    j=1
+  fi
+  LBUFFER="$words[1,((i-1))] $alter[$j] $words[((i+1)),$#words]"
+}
+bindkey -M viins -- '\e\t' alternate
