@@ -170,7 +170,7 @@ ZSH_HIGHLIGHT_STYLES[redirection]='fg=5'
 ZSH_HIGHLIGHT_STYLES[comment]='fg=240'
 ZSH_HIGHLIGHT_STYLES[arg0]='fg=27'
 ZSH_HIGHLIGHT_STYLES[root]='standout'
-ZSH_HIGHLIGHT_STYLES[default]='fg=246'
+ZSH_HIGHLIGHT_STYLES[default]='fg=7'
 
 # brackets
 ZSH_HIGHLIGHT_STYLES[bracket-level-1]='fg=27,bold'
