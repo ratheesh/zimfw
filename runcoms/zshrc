@@ -201,7 +201,7 @@ for keymap in 'emacs' 'viins' 'vicmd'; do
 done
 
 for keymap in  'emacs' 'viins' 'vicmd'; do
-    bindkey -M ${keymap} '^k' vi-forward-word
+   bindkey -M ${keymap} '^o' vi-forward-word
 done
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#606060"
