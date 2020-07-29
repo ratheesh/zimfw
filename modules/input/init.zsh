@@ -223,15 +223,15 @@ function expand-or-complete-with-indicator {
 zle -N expand-or-complete-with-indicator
 
 # Redisplay after completing, and avoid blank prompt after <Tab><Tab><Ctrl-C>
-expand-or-complete-with-redisplay() {
-  local indicator
-  zstyle -s ':zim:input:info:completing' format 'indicator'
-  print -n '$indicator'
-  sleep .1
-  zle expand-or-complete
-  zle redisplay
-}
-zle -N expand-or-complete-with-redisplay
+# expand-or-complete-with-redisplay() {
+#   local indicator
+#   zstyle -s ':zim:input:info:completing' format 'indicator'
+#   print -n '$indicator'
+#   sleep .1
+#   zle expand-or-complete
+#   zle redisplay
+# }
+# zle -N expand-or-complete-with-redisplay
 
 # Put into application mode and validate ${terminfo}
 zle-line-init() {
