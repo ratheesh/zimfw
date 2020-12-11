@@ -328,9 +328,9 @@ function prompt_ratheesh_setup() {
 
     # Set editor-info parameters.
     zstyle ':zim:input:info:completing' format '%B%F{9}∙∙∙∙∙%f%b'
-    zstyle ':zim:input:info:keymap:primary' format '%B%F{125}❯%F{65}❯%F{132}❯%f%b'
+    zstyle ':zim:input:info:keymap:primary' format '%B%F{125}❯%F{65}❯%F{133}❯%f%b'
     zstyle ':zim:input:info:keymap:primary:overwrite' format ' %F{3}♺%f'
-    zstyle ':zim:input:info:keymap:alternate' format '%B%F{125}❮%F{65}❮%F{132}❮%f%b'
+    zstyle ':zim:input:info:keymap:alternate' format '%B%F{125}❮%F{65}❮%F{133}❮%f%b'
 
     # ⎩⎫ ⎧⎭➜ ❯
     if (( $+commands[tput] ));then
