@@ -164,7 +164,7 @@ compdef _gnu_generic gcc
 compdef _gnu_generic gdb
 
 # partial match coloring
-zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=38;5;8=1;38;5;129=38;5;8}:${(s.:.)LS_COLORS}" "ma=3;38;5;76;48;5;236")'
+zstyle -e ':completion:*:default' list-colors 'reply=("${PREFIX:+=(#bi)($PREFIX:t)(?)*=38;5;60=1;38;5;129=38;5;60}:${(s.:.)LS_COLORS}" "ma=3;38;5;184;48;5;22")'
 
 # prevent a tab from being inserted when there are no characters to the left of the cursor.
 zstyle ':completion:*' insert-tab false
